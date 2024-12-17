@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Draft Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .navbar {
+            background-color: #0288d1;
+        }
+        .navbar-brand{
+            font-size: 5.0rem;
+            font-style: italic;
+            font-weight: bolder;
+            color: #ffffff;
+        }
+        .nav-link {
+            color: #ffffff !important;
+        }
+        .nav-link.active {
+            background-color: #0277bd;
+        }
+        .editor-container {
+            margin: 50px auto;
+            max-width: 800px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .textarea {
+            height: 200px;
+            font-size: 16px;
+        }
+        .textarea-result {
+            height: 400px; /* Increased height */
+            font-size: 16px;
+            position: relative;
+        }
+        .clear-button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: #d9534f;
+            border-color: #d9534f;
+        }
+        .clear-button:hover {
+            background-color: #c9302c;
+            border-color: #c9302c;
+        }
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            margin-top: 20px;
+        }
+        .btn-primary {
+            background-color: #0288d1;
+            border-color: #0288d1;
+        }
+        .btn-primary:hover {
+            background-color: #0277bd;
+            border-color: #0277bd;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+        }
+        .btn-danger {
+            background-color: #d9534f;
+            border-color: #d9534f;
+        }
+        .btn-danger:hover {
+            background-color: #c9302c;
+            border-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Grant Support</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav flex-column ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Draft Editor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/resources">Resources</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/orgProfile">Organization Profile</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Draft Editor -->
+    <div class="container editor-container">
+        <h1 class="text-center mb-4">Draft Editor</h1>
+        <textarea id="draftText" class="form-control textarea" placeholder="Compose your grant proposal here..."></textarea>
+
+        <!-- Buttons -->
+        <div class="btn-container">
+            <button id="analyzeButton" class="btn btn-primary">Analyze Draft</button>
+            <button id="suggestButton" class="btn btn-secondary">Get Suggestions</button>
+            <button id="suggestButton" class="btn btn-secondary">Voice</button>
+            <button id="clearButton" class="btn btn-danger">Clear</button>
+        </div>
+
+        <h3 class="mt-4">Generated Suggestions / Analysis</h3>
+        <textarea id="generatedText" class="form-control textarea-result" placeholder="AI-generated content will appear here..."></textarea>
+        <button class="btn btn-danger" onclick="clearGeneratedText()">Clear</button>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript Functionality -->
+    <script>
+        // Functionality for Buttons
+        document.getElementById("analyzeButton").addEventListener("click", async () => {
+            const draft = document.getElementById("draftText").value;
+            if (!draft.trim()) {
+                alert("Please write something in the draft before analyzing.");
+                return;
+            }
+            alert("Analyzing the draft... (AI feature to be implemented)");
+            const response = await fetch("http://localhost:3000/analyse", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json", // Specify JSON content
+                },
+                body: JSON.stringify({ text: draft }), // Send draft in request body
+            });
+            const result = await response.json();
+            document.getElementById("generatedText").value = result.res;
+        });
+
+        document.getElementById("suggestButton").addEventListener("click", async () => {
+            const draft = document.getElementById("draftText").value;
+            if (!draft.trim()) {
+                alert("Please write something in the draft to get suggestions.");
+                return;
+            }
+            alert("Fetching suggestions... (AI feature to be implemented)");
+            const response = await fetch("http://localhost:3000/suggest", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json", // Specify JSON content
+                },
+                body: JSON.stringify({ text: draft }), // Send draft in request body
+            });
+            const result = await response.json();
+            document.getElementById("generatedText").value = result.res;
+        });
+
+        document.getElementById("clearButton").addEventListener("click", () => {
+            document.getElementById("draftText").value = "";
+        });
+
+        function clearGeneratedText() {
+            document.getElementById("generatedText").value = "";
+        }
+    </script>
+</body>
+</html>
